@@ -1,5 +1,62 @@
 extends layout
 
 block content
-  h1= title
-  p Welcome to #{title}
+	div.row
+		div.span9
+			h1(class="text-center" ) IRoomVision
+			div.row
+				//-the grid used for image
+				div.span7
+					p(class="label label-info" id="title_canvas") Real-Time Map
+					canvas(id="myCanvas" width="550" height="330")
+						|Your browser does not support the HTML5 canvas tag.
+				//-the grid used for data	
+				div.span2
+					p(class="label label-info") Real-Time Data
+	//- the img will be drawed on the website
+	img(id="scream" src="/images/iRoomLayout.png" alt="The Scream"  width="1" height="1")
+	
+	//- javascript
+	script.
+		var c=document.getElementById("myCanvas");
+		var ctx=c.getContext("2d");
+		var c=document.getElementById("myCanvas");
+		var ctx=c.getContext("2d");
+		var img=document.getElementById("scream");
+
+	
+		ctx.drawImage(img,0,0,500,330);
+
+		//- function to update time
+		function updateTime(){
+
+			var today=new Date();
+			var h=today.getHours();
+			var m=today.getMinutes();
+			var s=today.getSeconds();
+
+			// add a zero in front of numbers<10
+			m=checkTime(m);
+			s=checkTime(s);
+			document.getElementById('title_canvas').innerHTML="Real-Time Map      "+h+":"+m+":"+s;
+		}
+
+		//- refresh every seconds
+		var t=setInterval(runFunction,1000);
+		function runFunction(){
+			updateTime();
+			$.get("json",function(data,status){
+				var len=data.length;
+			});
+		}
+
+		function checkTime(i)
+		{
+		if (i<10)
+		{
+		i="0" + i;
+		}
+		return i;
+		}
+
+		
