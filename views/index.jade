@@ -13,11 +13,13 @@ block content
 				//-the grid used for data	
 				div.span2
 					p(class="label label-info") Real-Time Data
+					p(class="badge badge-inverse" id="peopleCount") 0 People Inside
 	//- the img will be drawed on the website
 	img(id="scream" src="/images/iRoomLayout.png" alt="The Scream"  width="1" height="1")
 	
-	//- javascript
+	//- javascript>>>>>>>>>>>>>>>>>>>>>>>>
 	script.
+		//-draw the Iroom Layout
 		var c=document.getElementById("myCanvas");
 		var ctx=c.getContext("2d");
 		var c=document.getElementById("myCanvas");
@@ -26,8 +28,37 @@ block content
 
 	
 		ctx.drawImage(img,0,0,500,330);
+		drawCircle(200,300,ctx);
 
-		//- function to update time
+		//- the main function refresh every seconds
+		var t=setInterval(runFunction,1000);
+		function runFunction(){
+			//- update time
+			updateTime();
+			//- get the location data
+			$.get("json",function(data,status){
+				var len=data.length;
+				document.getElementById('peopleCount').innerHTML=len+" People Inside";
+				//-redraw the image map
+				ctx.drawImage(img,0,0,500,330);
+				//-draw people on the map
+				for(var i=0;i<len;i++){
+					drawCircle(data[i][0],data[i][1],ctx);
+				}
+			});
+		}
+
+		//-the subfunction for formatting the time
+		function checkTime(i)
+		{
+		if (i<10)
+		{
+			i="0" + i;
+		}
+			return i;
+		}
+
+		//- function to update time on the webpage
 		function updateTime(){
 
 			var today=new Date();
@@ -41,22 +72,19 @@ block content
 			document.getElementById('title_canvas').innerHTML="Real-Time Map      "+h+":"+m+":"+s;
 		}
 
-		//- refresh every seconds
-		var t=setInterval(runFunction,1000);
-		function runFunction(){
-			updateTime();
-			$.get("json",function(data,status){
-				var len=data.length;
-			});
+		//- function to draw a circle on the canvas
+		function drawCircle(x,y,context){
+			context.beginPath();
+				context.arc(x, y, 6, 0, 2 * Math.PI, false);
+				context.fillStyle = 'green';
+				context.fill();
+				context.lineWidth = 2;
+				context.strokeStyle = '#003300';
+				context.stroke();
 		}
 
-		function checkTime(i)
-		{
-		if (i<10)
-		{
-		i="0" + i;
-		}
-		return i;
-		}
 
+
+
+      
 		
